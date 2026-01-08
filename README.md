@@ -5,10 +5,10 @@
 
 ![Banner Kaltim](https://upload.wikimedia.org/wikipedia/commons/3/3d/Logo_SMKN_7_Samarinda.png)
 
-**12 Tim × 3 Siswa = 36 Web PHP Native Pariwisata Kaltim**  
+**12 Tim × 3 Siswa = 36 Web Pariwisata Kaltim**  
 **9 Januari - 5 Februari 2026**  
-**Kajur PPLG:** Bapak Hendra Yuni Irawan, S.Kom  
-**PIC Koordinator:** Ghani Desta | Widhi | Navies
+**Kajur PPLG:** Bapak Hendra Yuni Irawan,S. T., M.Kom  
+**PIC Mentor:** Ghani | Widhi | Navies
 
 [![Progress](https://img.shields.io/badge/Progress-0%2F12-teal)](docs/progress.md)
 [![Deadline](https://img.shields.io/badge/Deadline-5_Feb-red)](https://calendar.google.com/calendar/u/0?cid=c_kaltimproject)
@@ -20,9 +20,9 @@
 
 ## 📋 **Tugas Mini Project**
 
-**BUAT 1 MINI WEB PARIWISATA KALTIM** menggunakan **PHP Native + MySQL + Bootstrap**.
+**BUAT 1 MINI WEB PARIWISATA KALTIM** menggunakan **Tech Stack Sesuka Kalian dan Memiliki Database**.
 
-**Pilih 1 subtema** → download source → custom data Kaltim → deploy online → submit link demo.
+**Pilih 1 subtema** → download source atau mengembangkan sendiri → custom data Kaltim → final → submit project ke github.
 
 ### **5 Subtema Pilihan (WAJIB KALTIM Full)**
 | # | **Subtema** | **Destinasi Contoh** | **Fitur Wajib** |
