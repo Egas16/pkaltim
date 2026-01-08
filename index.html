@@ -645,6 +645,9 @@
         document.querySelectorAll('#teams .group.glass-card').forEach((card, idx) => {
             const p = card.querySelector('p.text-sm');
             if (!p) return;
+            const heading = card.querySelector('h3');
+            if (heading) heading.setAttribute('data-team-heading', `${idx + 1}`);
+            p.setAttribute('data-team-desc', `${idx + 1}`);
             const wrapper = document.createElement('div');
             wrapper.className = 'flex flex-col gap-2 mb-3';
             wrapper.innerHTML = `
@@ -751,15 +754,27 @@
         const owner = 'fk0u';
         const repo = 'pkaltim';
 
+        const ghHeaders = {
+            'Accept': 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
+        };
+
         async function fetchClaims() {
             try {
-                const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues?labels=subtema&state=all&per_page=100`);
+                const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues?state=all&per_page=100&sort=updated&direction=desc`, {
+                    headers: ghHeaders,
+                    cache: 'no-store',
+                    mode: 'cors',
+                });
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const issues = await res.json();
                 const claimsMap = {};
 
                 issues.forEach((issue) => {
-                    const m = issue.title.match(/Tim\s*(\d{1,2})/i);
+                    const hasLabel = Array.isArray(issue.labels) && issue.labels.some(l => (l.name || '').toLowerCase() === 'subtema');
+                    const inTitle = /claim\s*subtema/i.test(issue.title || '');
+                    if (!hasLabel && !inTitle) return;
+                    const m = (issue.title || '').match(/Tim\s*(\d{1,2})/i);
                     if (!m) return;
                     const teamNum = parseInt(m[1], 10);
                     let subtema = '';
@@ -785,7 +800,11 @@
 
         async function fetchSubmissions() {
             try {
-                const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/pulls?state=all&per_page=100`);
+                const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/pulls?state=all&per_page=100&sort=updated&direction=desc`, {
+                    headers: ghHeaders,
+                    cache: 'no-store',
+                    mode: 'cors',
+                });
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const prs = await res.json();
                 const submissions = {};
@@ -852,6 +871,26 @@
                     el.classList.add('bg-amber-100','text-amber-700','dark:bg-amber-900/60','dark:text-amber-100');
                     el.classList.remove('bg-emerald-100','text-emerald-700','dark:bg-emerald-900/60','dark:text-emerald-100');
                     el.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-500"></span> Subtema: belum dipilih';
+                }
+            });
+
+            // Update card titles/descriptions to reflect claimed subtema
+            document.querySelectorAll('[data-team-heading]').forEach((el) => {
+                const team = parseInt(el.getAttribute('data-team-heading'), 10);
+                const claim = state.claims[team];
+                if (claim) {
+                    el.textContent = `Subtema: ${claim.subtema}`;
+                } else {
+                    el.textContent = 'Pilih 1 dari 5 subtema';
+                }
+            });
+            document.querySelectorAll('[data-team-desc]').forEach((el) => {
+                const team = parseInt(el.getAttribute('data-team-desc'), 10);
+                const claim = state.claims[team];
+                if (claim) {
+                    el.textContent = 'Sudah claim via GitHub Issue';
+                } else {
+                    el.textContent = 'Tim memilih subtema sendiri dari 5 opsi resmi.';
                 }
             });
 
