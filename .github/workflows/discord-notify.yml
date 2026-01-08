@@ -1,0 +1,51 @@
+name: Discord PR Notification
+
+on:
+  pull_request:
+    types: [opened, reopened, closed]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Send Discord Notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          if [ "${{ github.event.action }}" == "opened" ] || [ "${{ github.event.action }}" == "reopened" ]; then
+            STATUS="🚀 New Submission"
+            COLOR=3447003
+          elif [ "${{ github.event.action }}" == "closed" ]; then
+            if [ "${{ github.event.pull_request.merged }}" == "true" ]; then
+              STATUS="✅ Submission Approved"
+              COLOR=3066993
+            else
+              STATUS="❌ Submission Closed"
+              COLOR=15158332
+            fi
+          fi
+          
+          curl -H "Content-Type: application/json" \
+            -d "{
+              \"embeds\": [{
+                \"title\": \"$STATUS\",
+                \"description\": \"**PR #${{ github.event.pull_request.number }}**: ${{ github.event.pull_request.title }}\",
+                \"url\": \"${{ github.event.pull_request.html_url }}\",
+                \"color\": $COLOR,
+                \"fields\": [
+                  {
+                    \"name\": \"Author\",
+                    \"value\": \"${{ github.event.pull_request.user.login }}\",
+                    \"inline\": true
+                  },
+                  {
+                    \"name\": \"Status\",
+                    \"value\": \"${{ github.event.action }}\",
+                    \"inline\": true
+                  }
+                ],
+                \"timestamp\": \"${{ github.event.pull_request.created_at }}\"
+              }]
+            }" \
+            $DISCORD_WEBHOOK
