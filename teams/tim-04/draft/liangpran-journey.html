@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liangpran — Where Nature Leads, Humans Follow</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Space+Mono&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'earth-dark': '#1a1a1a',
+                        'earth-green': '#2D3A3A',
+                        'earth-brown': '#8C7E6A',
+                        'earth-light': '#F4F1EA',
+                        'mist': '#E0E5E5'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                        mono: ['Space Mono', 'monospace'],
+                    },
+                    height: {
+                        'screen-dvh': '100dvh',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- GSAP & Lenis & Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <style>
+        body {
+            background-color: #F4F1EA;
+            color: #1a1a1a;
+            cursor: none;
+            /* Custom cursor */
+        }
+
+        .cursor-dot,
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #8C7E6A;
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #8C7E6A;
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        body:hover .cursor-outline.hovered {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(140, 126, 106, 0.1);
+            backdrop-filter: blur(2px);
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        #webgl-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+
+<body class="antialiased selection:bg-earth-brown selection:text-white">
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-outline" id="cursor-outline"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loader"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-earth-dark text-earth-light transition-opacity duration-700">
+        <div class="text-center">
+            <h1 class="font-serif text-3xl italic tracking-wider">Liangpran</h1>
+            <p class="font-mono text-xs mt-2 opacity-60">MAHAKAM ULU</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-40 px-6 py-6 flex justify-between items-center mix-blend-difference text-white opacity-0"
+        id="navbar">
+        <a href="#" class="font-serif text-xl font-medium tracking-wide hoverable">Liangpran.</a>
+        <div class="hidden md:flex gap-8 font-mono text-xs uppercase tracking-widest">
+            <a href="#about" class="hover:opacity-70 transition-opacity hoverable">About</a>
+            <a href="#nature" class="hover:opacity-70 transition-opacity hoverable">Nature</a>
+            <a href="#sustainability" class="hover:opacity-70 transition-opacity hoverable">Sustainability</a>
+            <a href="#culture" class="hover:opacity-70 transition-opacity hoverable">Culture</a>
+        </div>
+        <a href="#visit"
+            class="px-5 py-2 border border-white/30 rounded-full font-mono text-xs hover:bg-white hover:text-black transition-all hoverable">
+            Visit
+        </a>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative h-screen-dvh w-full overflow-hidden flex items-center justify-center">
+        <!-- Parallax Background Image -->
+        <div class="absolute inset-0 z-0">
+            <img src="./assets/hero-mountain.png" alt="Gunung Liangpran" class="w-full h-full object-cover scale-110"
+                id="hero-bg">
+            <div class="absolute inset-0 bg-black/30"></div>
+            <!-- WebGL Fog Container -->
+            <div id="webgl-container"></div>
+            <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-earth-dark/40 to-transparent"></div>
+        </div>
+
+        <!-- Content -->
+        <div class="relative z-10 text-center text-white px-4 mix-blend-overlay">
+            <p class="font-mono text-xs md:text-sm uppercase tracking-[0.3em] mb-4 opacity-0 hero-anim">Mahakam Ulu,
+                Kalimantan Timur</p>
+            <h1 class="font-serif text-6xl md:text-8xl lg:text-9xl mb-6 opacity-0 hero-anim split-text">Liangpran</h1>
+            <p
+                class="max-w-md mx-auto font-light text-white/90 text-lg md:text-xl leading-relaxed text-balance opacity-0 hero-anim">
+                Where nature leads, humans follow.
+            </p>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/60 animate-bounce">
+            <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+        </div>
+    </header>
+
+    <!-- Detailed About Section -->
+    <section id="about" class="py-24 md:py-32 px-6 md:px-12 max-w-7xl mx-auto">
+        <div class="grid md:grid-cols-12 gap-12 items-start">
+            <div class="md:col-span-4 sticky top-32">
+                <span class="font-mono text-xs text-earth-brown uppercase tracking-widest block mb-4">The
+                    Location</span>
+                <h2 class="font-serif text-4xl md:text-5xl text-earth-green mb-6 leading-tight hoverable">
+                    Simbol Ketenangan & <br><span class="italic text-earth-brown">Keseimbangan.</span>
+                </h2>
+                <div class="w-20 h-px bg-earth-brown/30"></div>
+            </div>
+            <div class="md:col-span-1"></div>
+            <div class="md:col-span-7 space-y-8 text-earth-dark/80 text-lg leading-relaxed font-light">
+                <p class="reveal-text">
+                    Tersembunyi di jantung Mahakam Ulu, Gunung Liangpran berdiri bukan hanya sebagai formasi geologis,
+                    tetapi sebagai saksi bisu perjalanan waktu. Bagi masyarakat lokal, ini adalah "rumah"—tempat di mana
+                    sungai mengalir jernih dan hutan bernafas lega.
+                </p>
+                <p class="reveal-text">
+                    Di sini, kemewahan didefinisikan ulang. Bukan tentang emas atau marmer, melainkan tentang udara
+                    bersih, suara serangga hutan, dan kabut pagi yang memeluk puncak gunung. Liangpran mengajarkan kita
+                    untuk melambat, mendengarkan, dan kembali terhubung dengan ritme alam yang sering terlupakan.
+                </p>
+                <div class="grid grid-cols-2 gap-8 pt-8 font-mono text-sm text-earth-green">
+                    <div class="hoverable">
+                        <div class="text-3xl font-serif mb-1">920<span class="text-base italic">mdpl</span></div>
+                        <span class="opacity-60">Ketinggian</span>
+                    </div>
+                    <div class="hoverable">
+                        <div class="text-3xl font-serif mb-1">85<span class="text-base italic">%</span></div>
+                        <span class="opacity-60">Tutupan Hutan Primer</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nature Experience (Horizontal Scroll) -->
+    <section id="nature" class="py-20 bg-earth-green text-earth-light overflow-hidden">
+        <div class="px-6 md:px-12 mb-12 flex justify-between items-end">
+            <div>
+                <span class="font-mono text-xs opacity-60 uppercase tracking-widest">Nature Experience</span>
+                <h2 class="font-serif text-4xl mt-3">Jejak Alam Liar</h2>
+            </div>
+            <div class="hidden md:block font-mono text-xs opacity-50">SCROLL FOR MORE &rarr;</div>
+        </div>
+
+        <div class="flex gap-8 px-6 md:px-12 overflow-x-auto hide-scrollbar pb-12 snap-x snap-mandatory"
+            id="nature-gallery">
+            <!-- Card 1 -->
+            <div
+                class="min-w-[85vw] md:min-w-[40vw] snap-center group relative overflow-hidden rounded-sm aspect-[4/3] md:aspect-[16/9] bg-white/5 hoverable">
+                <img src="./assets/nature-forest.png" alt="Hutan Hujan"
+                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100">
+                <div class="absolute bottom-0 left-0 p-8 w-full bg-gradient-to-t from-black/60 to-transparent">
+                    <h3 class="font-serif text-2xl mb-1 italic">Hutan Hujan Tropis</h3>
+                    <p class="font-mono text-xs opacity-80">Paru-paru dunia yang masih terjaga.</p>
+                </div>
+            </div>
+            <!-- Card 2 -->
+            <div
+                class="min-w-[85vw] md:min-w-[40vw] snap-center group relative overflow-hidden rounded-sm aspect-[4/3] md:aspect-[16/9] bg-earth-brown/20 hoverable">
+                <div
+                    class="w-full h-full bg-earth-dark flex items-center justify-center p-12 text-center relative overflow-hidden">
+                    <div class="absolute inset-0 opacity-20"
+                        style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M54.627 0l.83.828-1.415 1.415-.828-.828-.828.828-1.415-1.415.828-.828-.828-.828 1.415-1.415.828.828.828-.828 1.415 1.415-.828.828zM22.485 0l.83.828-1.415 1.415-.828-.828-.828.828-1.415-1.415.828-.828-.828-.828 1.415-1.415.828.828.828-.828 1.415 1.415-.828.828zM0 22.485l.828.83-1.415 1.415-.828-.828-.828.828L-1.415 22.485l.828-.828-.828-.828 1.415-1.415.828.828.828-.828 1.415 1.415-.828.828zM0 54.627l.828.83-1.415 1.415-.828-.828-.828.828L-1.415 54.627l.828-.828-.828-.828 1.415-1.415.828.828.828-.828 1.415 1.415-.828.828zM54.627 60L60 54.627v5.373h-5.373z\' fill=\'%23ffffff\' fill-opacity=\'0.05\' fill-rule=\'evenodd\'/%3E%3C/svg%3E');">
+                    </div>
+                    <div class="relative z-10">
+                        <h3 class="font-serif text-2xl mb-2">Flora Endemik</h3>
+                        <p class="font-light text-sm opacity-80">Rumah bagi ribuan spesies anggrek dan tanaman obat
+                            langka.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 3 -->
+            <div
+                class="min-w-[85vw] md:min-w-[40vw] snap-center group relative overflow-hidden rounded-sm aspect-[4/3] md:aspect-[16/9] bg-white/5 hoverable">
+                <img src="./assets/hero-mountain.png" alt="River View"
+                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100 grayscale hover:grayscale-0">
+                <div class="absolute bottom-0 left-0 p-8 w-full bg-gradient-to-t from-black/60 to-transparent">
+                    <h3 class="font-serif text-2xl mb-1 italic">Sungai Kehidupan</h3>
+                    <p class="font-mono text-xs opacity-80">Aliran nadi Mahakam yang menghidupi peradaban.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Culture & Sustainability Grid -->
+    <section id="culture" class="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-16 lg:gap-24 items-center">
+
+            <!-- Image Side -->
+            <div class="relative order-2 md:order-1 hoverable">
+                <div class="aspect-[4/5] bg-earth-brown/10 overflow-hidden relative rounded-sm">
+                    <img src="./assets/culture-community.png" alt="Budaya Lokal" class="w-full h-full object-cover"
+                        id="culture-img">
+                </div>
+                <!-- Floating Card -->
+                <div
+                    class="absolute -bottom-10 -right-4 md:-right-10 bg-earth-light p-8 shadow-xl max-w-xs border border-earth-brown/10">
+                    <p class="font-serif italic text-lg text-earth-green">"Alam memberi, kami menjaga."</p>
+                    <p class="font-mono text-xs mt-2 text-earth-dark/50">— Filosofi Lokal</p>
+                </div>
+            </div>
+
+            <!-- Content Side -->
+            <div class="order-1 md:order-2 space-y-8">
+                <div>
+                    <span class="font-mono text-xs text-earth-brown uppercase tracking-widest block mb-4">Culture &
+                        Wisdom</span>
+                    <h2 class="font-serif text-4xl md:text-5xl text-earth-dark mb-6">Penjaga Tradisi,<br>Pelindung Alam.
+                    </h2>
+                    <p class="text-earth-dark/70 leading-relaxed font-light reveal-text">
+                        Masyarakat Mahakam Ulu tidak hanya tinggal di dekat hutan, mereka adalah bagian darinya. Setiap
+                        motif manik, setiap tarian, dan setiap ritual adalah ode untuk keseimbangan ekologis.
+                    </p>
+                </div>
+
+                <div id="sustainability" class="pt-8 border-t border-earth-brown/20">
+                    <h3 class="font-serif text-2xl text-earth-green mb-6">Prinsip Ekowisata</h3>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="flex flex-col gap-2 hoverable">
+                            <span
+                                class="w-8 h-8 rounded-full border border-earth-brown/30 flex items-center justify-center text-earth-brown">
+                                <svg width="14" height="14" fill="none" class="opacity-70" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" />
+                                </svg>
+                            </span>
+                            <span class="font-bold text-sm text-earth-dark">Low Impact</span>
+                            <p class="text-xs text-earth-dark/60 leading-relaxed">Meminimalkan jejak karbon dan
+                                gangguan.</p>
+                        </div>
+                        <div class="flex flex-col gap-2 hoverable">
+                            <span
+                                class="w-8 h-8 rounded-full border border-earth-brown/30 flex items-center justify-center text-earth-brown">
+                                <svg width="14" height="14" fill="none" class="opacity-70" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
+                            </span>
+                            <span class="font-bold text-sm text-earth-dark">Community Based</span>
+                            <p class="text-xs text-earth-dark/60 leading-relaxed">Memberdayakan ekonomi lokal secara
+                                langsung.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quote Separator -->
+    <section class="py-32 bg-earth-dark text-earth-light text-center px-6">
+        <p class="font-serif italic text-3xl md:text-5xl leading-tight max-w-4xl mx-auto opacity-90 reveal-text">
+            "Gunung Liangpran adalah simbol ketenangan, <br>kekuatan alam, dan keseimbangan hidup."
+        </p>
+    </section>
+
+    <!-- Footer / CTA -->
+    <footer id="visit" class="bg-earth-green text-earth-light py-24 px-6 md:px-12 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-end relative z-10">
+            <div>
+                <h2 class="font-serif text-5xl md:text-7xl mb-8">Start Your <br>Journey.</h2>
+                <div class="flex flex-col gap-4 items-start">
+                    <a href="#"
+                        class="inline-flex items-center gap-3 px-8 py-4 bg-earth-light text-earth-green rounded-full font-mono text-sm uppercase tracking-wide hover:bg-white transition-colors hoverable">
+                        <span>Explore Responsibly</span>
+                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                    <p class="text-white/40 text-xs mt-4 max-w-xs leading-relaxed">
+                        Dengan mengunjungi Liangpran, Anda menyetujui kode etik pelestarian alam Mahakam Ulu.
+                    </p>
+                </div>
+            </div>
+            <div class="text-right space-y-2 font-mono text-xs opacity-50">
+                <p>Kalimantan Timur, Indonesia</p>
+                <p>&copy; 2026 Liangpran Eco-Tourism | Tim No. 04</p>
+                <div class="flex gap-4 justify-end mt-8">
+                    <a href="https://github.com/fk0u/pkaltim" class="hover:text-white hoverable">GitHub</a>
+                    <a href="#" class="hover:text-white hoverable">Email</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Custom Cursor Logic
+        const cursorDot = document.getElementById("cursor-dot");
+        const cursorOutline = document.getElementById("cursor-outline");
+
+        window.addEventListener("mousemove", (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            // Slightly delayed outline
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // Hover Effect
+        document.querySelectorAll('.hoverable').forEach(el => {
+            el.addEventListener('mouseenter', () => cursorOutline.classList.add('hovered'));
+            el.addEventListener('mouseleave', () => cursorOutline.classList.remove('hovered'));
+        });
+
+        // Lenis Smooth Scroll
+        const lenis = new Lenis();
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // Loading Animation & Init
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            const navbar = document.getElementById('navbar');
+
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                loader.style.pointerEvents = 'none';
+
+                // Animate Hero Content
+                gsap.to('.hero-anim', {
+                    y: 0,
+                    opacity: 1,
+                    duration: 1.5,
+                    stagger: 0.2,
+                    ease: 'power3.out',
+                    delay: 0.5
+                });
+
+                gsap.to(navbar, { opacity: 1, duration: 1, delay: 1 });
+
+                // Init ThreeJS after load
+                initThreeJS();
+
+            }, 1000);
+        });
+
+        // Register ScrollTrigger
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Parallax Hero
+        gsap.to("#hero-bg", {
+            yPercent: 20,
+            ease: "none",
+            scrollTrigger: {
+                trigger: "header",
+                start: "top top",
+                end: "bottom top",
+                scrub: true
+            }
+        });
+
+        // Text Reveals
+        const splitTexts = document.querySelectorAll(".reveal-text");
+        splitTexts.forEach(text => {
+            gsap.from(text, {
+                opacity: 0,
+                y: 20,
+                duration: 1,
+                scrollTrigger: {
+                    trigger: text,
+                    start: "top 85%",
+                    toggleActions: "play none none reverse"
+                }
+            });
+        });
+
+        // About Image Parallax
+        gsap.from("#culture-img", {
+            scale: 1.2,
+            scrollTrigger: {
+                trigger: "#culture",
+                start: "top bottom",
+                end: "bottom top",
+                scrub: true
+            }
+        });
+
+        // Horizontal Scroll for Nature Section
+        gsap.utils.toArray('#nature-gallery > div').forEach((card, i) => {
+            gsap.from(card, {
+                opacity: 0,
+                y: 50,
+                duration: 1,
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 90%",
+                    toggleActions: "play none none reverse"
+                }
+            });
+        });
+
+        // Three.js Fog Effect
+        function initThreeJS() {
+            const container = document.getElementById('webgl-container');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true });
+
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            // Create Fog/Mist Particles
+            const particlesGeometry = new THREE.BufferGeometry();
+            const count = 500;
+            const posArray = new Float32Array(count * 3);
+
+            for (let i = 0; i < count * 3; i++) {
+                // Spread particles across the width/height
+                posArray[i] = (Math.random() - 0.5) * 15;
+            }
+
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+            // Create a soft circle texture programmatically
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height = 32;
+            const ctx = canvas.getContext('2d');
+            const grad = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
+            grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+            grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 32, 32);
+            const texture = new THREE.CanvasTexture(canvas);
+
+            const material = new THREE.PointsMaterial({
+                size: 0.1,
+                map: texture,
+                transparent: true,
+                opacity: 0.4,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            });
+
+            const particles = new THREE.Points(particlesGeometry, material);
+            scene.add(particles);
+
+            camera.position.z = 2;
+
+            // Mouse Interaction
+            let mouseX = 0;
+            let mouseY = 0;
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX / window.innerWidth - 0.5;
+                mouseY = e.clientY / window.innerHeight - 0.5;
+            });
+
+            function animate() {
+                requestAnimationFrame(animate);
+
+                // Gentle floating movement
+                particles.rotation.y += 0.0005;
+                particles.rotation.x = mouseY * 0.05;
+                particles.rotation.y += mouseX * 0.05;
+
+                // Interactive with mouse
+
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            // Resize handle
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+        }
+    </script>
+</body>
+
+</html>
