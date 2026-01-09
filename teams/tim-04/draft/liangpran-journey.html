@@ -103,6 +103,20 @@
             pointer-events: none;
             opacity: 0.6;
         }
+
+        /* Cookie Banner */
+        #cookie-banner {
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            transition: bottom 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        #cookie-banner.active {
+            bottom: 0;
+        }
     </style>
 </head>
 
@@ -111,6 +125,23 @@
     <!-- Custom Cursor -->
     <div class="cursor-dot" id="cursor-dot"></div>
     <div class="cursor-outline" id="cursor-outline"></div>
+
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-banner" class="bg-earth-dark text-earth-light py-6 px-6 md:px-12 border-t border-white/10">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="text-sm font-light opacity-80 max-w-2xl">
+                <p><strong>Kami menghargai privasi Anda.</strong> Website ini menggunakan cookies untuk meningkatkan
+                    pengalaman pengguna dan menganalisis trafik situs. Dengan melanjutkan, Anda menyetujui penggunaan
+                    cookies kami.</p>
+            </div>
+            <div class="flex gap-4 font-mono text-xs uppercase tracking-widest">
+                <button onclick="cookieSystem.reject()"
+                    class="px-6 py-3 border border-white/20 hover:bg-white/10 transition-colors rounded-sm hoverable">Reject</button>
+                <button onclick="cookieSystem.accept()"
+                    class="px-6 py-3 bg-earth-light text-earth-dark hover:bg-white transition-colors rounded-sm hoverable">Accept</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Loading Overlay -->
     <div id="loader"
@@ -203,6 +234,19 @@
                 </div>
             </div>
         </div>
+        </div>
+
+        <!-- Google Maps Integration -->
+        <div class="mt-16 w-full h-[450px] bg-earth-brown/10 rounded-sm overflow-hidden hoverable relative group">
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15956.50772356247!2d114.3833333!3d1.06666665!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3206a6ff0b093ae1%3A0x353a34483a97facd!2sGunung%20Liangpran!5e0!3m2!1sid!2sid!4v1767967524535!5m2!1sid!2sid"
+                width="100%" height="100%" style="border:0; filter: grayscale(1) contrast(1.2);" allowfullscreen=""
+                loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                class="transition-all duration-700 group-hover:filter-none"></iframe>
+            <div
+                class="absolute inset-0 bg-earth-green/10 pointer-events-none group-hover:opacity-0 transition-opacity duration-700">
+            </div>
+        </div>
     </section>
 
     <!-- Nature Experience (Horizontal Scroll) -->
@@ -217,107 +261,16 @@
 
         <div class="flex gap-8 px-6 md:px-12 overflow-x-auto hide-scrollbar pb-12 snap-x snap-mandatory"
             id="nature-gallery">
-            <!-- Card 1 -->
-            <div
-                class="min-w-[85vw] md:min-w-[40vw] snap-center group relative overflow-hidden rounded-sm aspect-[4/3] md:aspect-[16/9] bg-white/5 hoverable">
-                <img src="./assets/nature-forest.png" alt="Hutan Hujan"
-                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100">
-                <div class="absolute bottom-0 left-0 p-8 w-full bg-gradient-to-t from-black/60 to-transparent">
-                    <h3 class="font-serif text-2xl mb-1 italic">Hutan Hujan Tropis</h3>
-                    <p class="font-mono text-xs opacity-80">Paru-paru dunia yang masih terjaga.</p>
-                </div>
-            </div>
-            <!-- Card 2 -->
-            <div
-                class="min-w-[85vw] md:min-w-[40vw] snap-center group relative overflow-hidden rounded-sm aspect-[4/3] md:aspect-[16/9] bg-earth-brown/20 hoverable">
-                <div
-                    class="w-full h-full bg-earth-dark flex items-center justify-center p-12 text-center relative overflow-hidden">
-                    <div class="absolute inset-0 opacity-20"
-                        style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M54.627 0l.83.828-1.415 1.415-.828-.828-.828.828-1.415-1.415.828-.828-.828-.828 1.415-1.415.828.828.828-.828 1.415 1.415-.828.828zM22.485 0l.83.828-1.415 1.415-.828-.828-.828.828-1.415-1.415.828-.828-.828-.828 1.415-1.415.828.828.828-.828 1.415 1.415-.828.828zM0 22.485l.828.83-1.415 1.415-.828-.828-.828.828L-1.415 22.485l.828-.828-.828-.828 1.415-1.415.828.828.828-.828 1.415 1.415-.828.828zM0 54.627l.828.83-1.415 1.415-.828-.828-.828.828L-1.415 54.627l.828-.828-.828-.828 1.415-1.415.828.828.828-.828 1.415 1.415-.828.828zM54.627 60L60 54.627v5.373h-5.373z\' fill=\'%23ffffff\' fill-opacity=\'0.05\' fill-rule=\'evenodd\'/%3E%3C/svg%3E');">
-                    </div>
-                    <div class="relative z-10">
-                        <h3 class="font-serif text-2xl mb-2">Flora Endemik</h3>
-                        <p class="font-light text-sm opacity-80">Rumah bagi ribuan spesies anggrek dan tanaman obat
-                            langka.</p>
-                    </div>
-                </div>
-            </div>
-            <!-- Card 3 -->
-            <div
-                class="min-w-[85vw] md:min-w-[40vw] snap-center group relative overflow-hidden rounded-sm aspect-[4/3] md:aspect-[16/9] bg-white/5 hoverable">
-                <img src="./assets/hero-mountain.png" alt="River View"
-                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100 grayscale hover:grayscale-0">
-                <div class="absolute bottom-0 left-0 p-8 w-full bg-gradient-to-t from-black/60 to-transparent">
-                    <h3 class="font-serif text-2xl mb-1 italic">Sungai Kehidupan</h3>
-                    <p class="font-mono text-xs opacity-80">Aliran nadi Mahakam yang menghidupi peradaban.</p>
-                </div>
-            </div>
+            <!-- Dynamic Content (Simulated Backend) -->
+
         </div>
     </section>
 
     <!-- Culture & Sustainability Grid -->
     <section id="culture" class="py-24 px-6 md:px-12 max-w-7xl mx-auto">
-        <div class="grid md:grid-cols-2 gap-16 lg:gap-24 items-center">
+        <div id="culture-container">
+            <!-- Dynamic Content (Simulated Backend) -->
 
-            <!-- Image Side -->
-            <div class="relative order-2 md:order-1 hoverable">
-                <div class="aspect-[4/5] bg-earth-brown/10 overflow-hidden relative rounded-sm">
-                    <img src="./assets/culture-community.png" alt="Budaya Lokal" class="w-full h-full object-cover"
-                        id="culture-img">
-                </div>
-                <!-- Floating Card -->
-                <div
-                    class="absolute -bottom-10 -right-4 md:-right-10 bg-earth-light p-8 shadow-xl max-w-xs border border-earth-brown/10">
-                    <p class="font-serif italic text-lg text-earth-green">"Alam memberi, kami menjaga."</p>
-                    <p class="font-mono text-xs mt-2 text-earth-dark/50">— Filosofi Lokal</p>
-                </div>
-            </div>
-
-            <!-- Content Side -->
-            <div class="order-1 md:order-2 space-y-8">
-                <div>
-                    <span class="font-mono text-xs text-earth-brown uppercase tracking-widest block mb-4">Culture &
-                        Wisdom</span>
-                    <h2 class="font-serif text-4xl md:text-5xl text-earth-dark mb-6">Penjaga Tradisi,<br>Pelindung Alam.
-                    </h2>
-                    <p class="text-earth-dark/70 leading-relaxed font-light reveal-text">
-                        Masyarakat Mahakam Ulu tidak hanya tinggal di dekat hutan, mereka adalah bagian darinya. Setiap
-                        motif manik, setiap tarian, dan setiap ritual adalah ode untuk keseimbangan ekologis.
-                    </p>
-                </div>
-
-                <div id="sustainability" class="pt-8 border-t border-earth-brown/20">
-                    <h3 class="font-serif text-2xl text-earth-green mb-6">Prinsip Ekowisata</h3>
-                    <div class="grid grid-cols-2 gap-6">
-                        <div class="flex flex-col gap-2 hoverable">
-                            <span
-                                class="w-8 h-8 rounded-full border border-earth-brown/30 flex items-center justify-center text-earth-brown">
-                                <svg width="14" height="14" fill="none" class="opacity-70" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" />
-                                </svg>
-                            </span>
-                            <span class="font-bold text-sm text-earth-dark">Low Impact</span>
-                            <p class="text-xs text-earth-dark/60 leading-relaxed">Meminimalkan jejak karbon dan
-                                gangguan.</p>
-                        </div>
-                        <div class="flex flex-col gap-2 hoverable">
-                            <span
-                                class="w-8 h-8 rounded-full border border-earth-brown/30 flex items-center justify-center text-earth-brown">
-                                <svg width="14" height="14" fill="none" class="opacity-70" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                </svg>
-                            </span>
-                            <span class="font-bold text-sm text-earth-dark">Community Based</span>
-                            <p class="text-xs text-earth-dark/60 leading-relaxed">Memberdayakan ekonomi lokal secara
-                                langsung.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
 
@@ -359,7 +312,233 @@
     </footer>
 
     <!-- Scripts -->
+    <script src="./system.js"></script> <!-- Shared Data Layer -->
     <script>
+        // --- DATA CONNECTION ---
+        // Using System.db from system.js to simulate backend
+
+        // --- FRONTEND RENDERING ---
+        async function renderDynamicContent() {
+            // Simulate Network Delay
+            await new Promise(r => setTimeout(r, 800));
+
+            const rawData = System.db.getAll('main_data');
+
+            // Filter Data
+            const natureData = rawData.filter(item => item.category_id === 1);
+            const cultureData = rawData.filter(item => item.category_id === 2);
+
+            renderNature(natureData);
+            renderCulture(cultureData);
+        }
+
+        function renderNature(data) {
+            const container = document.getElementById('nature-gallery');
+            container.innerHTML = ''; // Clear loading state
+
+            data.forEach(item => {
+                let cardHTML = '';
+                if (item.type === 'pattern') {
+                    cardHTML = `
+                     <div class="min-w-[85vw] md:min-w-[40vw] snap-center group relative overflow-hidden rounded-sm aspect-[4/3] md:aspect-[16/9] bg-earth-brown/20 hoverable nature-card">
+                        <div class="w-full h-full bg-earth-dark flex items-center justify-center p-12 text-center relative overflow-hidden">
+                             <div class="absolute inset-0 opacity-20" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M54.627 0l.83.828-1.415 1.415-.828-.828-.828.828-1.415-1.415.828-.828-.828-.828 1.415-1.415.828.828.828-.828 1.415 1.415-.828.828zM22.485 0l.83.828-1.415 1.415-.828-.828-.828.828-1.415-1.415.828-.828-.828-.828 1.415-1.415.828.828.828-.828 1.415 1.415-.828.828zM0 22.485l.828.83-1.415 1.415-.828-.828-.828.828L-1.415 22.485l.828-.828-.828-.828 1.415-1.415.828.828.828-.828 1.415 1.415-.828.828zM0 54.627l.828.83-1.415 1.415-.828-.828-.828.828L-1.415 54.627l.828-.828-.828-.828 1.415-1.415.828.828.828-.828 1.415 1.415-.828.828zM54.627 60L60 54.627v5.373h-5.373z\' fill=\'%23ffffff\' fill-opacity=\'0.05\' fill-rule=\'evenodd\'/%3E%3C/svg%3E');"></div>
+                            <div class="relative z-10">
+                                <h3 class="font-serif text-2xl mb-2">${item.title}</h3>
+                                <p class="font-light text-sm opacity-80">${item.desc}</p>
+                            </div>
+                        </div>
+                    </div>`;
+                } else {
+                    const grayscaleClass = item.type === 'river' ? 'grayscale hover:grayscale-0' : '';
+                    cardHTML = `
+                    <div class="min-w-[85vw] md:min-w-[40vw] snap-center group relative overflow-hidden rounded-sm aspect-[4/3] md:aspect-[16/9] bg-white/5 hoverable nature-card">
+                        <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100 ${grayscaleClass}">
+                        <div class="absolute bottom-0 left-0 p-8 w-full bg-gradient-to-t from-black/60 to-transparent">
+                            <h3 class="font-serif text-2xl mb-1 italic">${item.title}</h3>
+                            <p class="font-mono text-xs opacity-80">${item.desc}</p>
+                        </div>
+                    </div>`;
+                }
+                container.innerHTML += cardHTML;
+            });
+
+            // Re-init ScrollTrigger for new elements
+            ScrollTrigger.refresh();
+            refreshHoverables();
+        }
+
+        function renderCulture(data) {
+            const container = document.getElementById('culture-container');
+            container.innerHTML = `
+                <div class="grid md:grid-cols-2 gap-16 lg:gap-24 items-center">
+                    <!-- Image Side -->
+                    <div class="relative order-2 md:order-1 hoverable" id="culture-img-wrapper">
+                        <div class="aspect-[4/5] bg-earth-brown/10 overflow-hidden relative rounded-sm">
+                            <img src="${data.image}" alt="Budaya Lokal" class="w-full h-full object-cover" id="culture-img">
+                        </div>
+                        <!-- Floating Card -->
+                        <div class="absolute -bottom-10 -right-4 md:-right-10 bg-earth-light p-8 shadow-xl max-w-xs border border-earth-brown/10">
+                            <p class="font-serif italic text-lg text-earth-green">"${data.quote}"</p>
+                            <p class="font-mono text-xs mt-2 text-earth-dark/50">— ${data.quoteSource}</p>
+                        </div>
+                    </div>
+
+                    <!-- Content Side -->
+                    <div class="order-1 md:order-2 space-y-8">
+                        <div>
+                            <span class="font-mono text-xs text-earth-brown uppercase tracking-widest block mb-4">Culture & Wisdom</span>
+                            <h2 class="font-serif text-4xl md:text-5xl text-earth-dark mb-6">${data.title}</h2>
+                            <p class="text-earth-dark/70 leading-relaxed font-light reveal-text">
+                                ${data.desc}
+                            </p>
+                        </div>
+
+                        <div id="sustainability-block" class="pt-8 border-t border-earth-brown/20">
+                            <h3 class="font-serif text-2xl text-earth-green mb-6">Prinsip Ekowisata</h3>
+                            <div class="grid grid-cols-2 gap-6">
+                                ${data.principles.map(p => `
+                                    <div class="flex flex-col gap-2 hoverable">
+                                        <span class="w-8 h-8 rounded-full border border-earth-brown/30 flex items-center justify-center text-earth-brown">
+                                            <svg width="14" height="14" fill="none" class="opacity-70" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                        </span>
+                                        <span class="font-bold text-sm text-earth-dark">${p.title}</span>
+                                        <p class="text-xs text-earth-dark/60 leading-relaxed">${p.desc}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             `;
+
+            // Re-init Logic for Culture
+            gsap.from("#culture-img-wrapper", {
+                scale: 1.05,
+                scrollTrigger: {
+                    trigger: "#culture",
+                    start: "top bottom",
+                    end: "bottom top",
+                    scrub: true
+                }
+            });
+
+            refreshHoverables();
+        }
+
+        function renderCulture(data) {
+            const container = document.getElementById('culture-container');
+            if (!data || data.length === 0) return;
+
+            // Featured Item (Take the first one)
+            const item = data[0];
+
+            container.innerHTML = `
+                <div class="grid md:grid-cols-2 gap-16 lg:gap-24 items-center">
+                    <!-- Image Side -->
+                    <div class="relative order-2 md:order-1 hoverable" id="culture-img-wrapper">
+                        <div class="aspect-[4/5] bg-earth-brown/10 overflow-hidden relative rounded-sm">
+                            <img src="${item.image || './assets/culture-community.png'}" alt="Budaya Lokal" class="w-full h-full object-cover" id="culture-img">
+                        </div>
+                        <!-- Floating Card -->
+                        <div class="absolute -bottom-10 -right-4 md:-right-10 bg-earth-light p-8 shadow-xl max-w-xs border border-earth-brown/10">
+                            <p class="font-serif italic text-lg text-earth-green">"${item.desc.substring(0, 40)}..."</p>
+                            <p class="font-mono text-xs mt-2 text-earth-dark/50">— Filosofi Lokal</p>
+                        </div>
+                    </div>
+
+                    <!-- Content Side -->
+                    <div class="order-1 md:order-2 space-y-8">
+                        <div>
+                            <span class="font-mono text-xs text-earth-brown uppercase tracking-widest block mb-4">Culture & Wisdom</span>
+                            <h2 class="font-serif text-4xl md:text-5xl text-earth-dark mb-6">${item.title}</h2>
+                            <p class="text-earth-dark/70 leading-relaxed font-light reveal-text">
+                                ${item.desc}
+                            </p>
+                        </div>
+
+                        <div id="sustainability-block" class="pt-8 border-t border-earth-brown/20">
+                            <h3 class="font-serif text-2xl text-earth-green mb-6">Prinsip Ekowisata</h3>
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="flex flex-col gap-2 hoverable">
+                                    <span class="w-8 h-8 rounded-full border border-earth-brown/30 flex items-center justify-center text-earth-brown">
+                                        <svg width="14" height="14" fill="none" class="opacity-70" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                    </span>
+                                    <span class="font-bold text-sm text-earth-dark">Low Impact</span>
+                                    <p class="text-xs text-earth-dark/60 leading-relaxed">Meminimalkan jejak karbon dan gangguan.</p>
+                                </div>
+                                <div class="flex flex-col gap-2 hoverable">
+                                    <span class="w-8 h-8 rounded-full border border-earth-brown/30 flex items-center justify-center text-earth-brown">
+                                        <svg width="14" height="14" fill="none" class="opacity-70" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                                    </span>
+                                    <span class="font-bold text-sm text-earth-dark">Community Based</span>
+                                    <p class="text-xs text-earth-dark/60 leading-relaxed">Memberdayakan ekonomi lokal secara langsung.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             `;
+
+            // Re-init Logic for Culture
+            gsap.from("#culture-img-wrapper", {
+                scale: 1.05,
+                scrollTrigger: {
+                    trigger: "#culture",
+                    start: "top bottom",
+                    end: "bottom top",
+                    scrub: true
+                }
+            });
+
+            refreshHoverables();
+        }
+        const cookieSystem = {
+            banner: document.getElementById('cookie-banner'),
+            init: function () {
+                const preference = localStorage.getItem('cookieDuplicateCheck_Liangpran');
+                if (!preference) {
+                    setTimeout(() => {
+                        this.banner.classList.add('active');
+                    }, 3000); // Show after 3s
+                }
+            },
+            accept: function () {
+                localStorage.setItem('cookieDuplicateCheck_Liangpran', 'accepted');
+                this.banner.classList.remove('active');
+            },
+            reject: function () {
+                localStorage.setItem('cookieDuplicateCheck_Liangpran', 'rejected');
+                this.banner.classList.remove('active');
+            }
+        };
+
+
+        // --- MAIN INIT ---
+        async function initSystem() {
+            try {
+                // Initialize Shared DB if not present
+                if (!localStorage.getItem('liangpran_db_v1')) {
+                    console.log('Seeding Database...');
+                    // System.db.getAll will trigger auto-seed if empty in our system.js logic
+                    System.db.getAll('users');
+                }
+
+                // Render Content
+                await renderDynamicContent();
+
+                // Initialize Cookie Logic
+                cookieSystem.init();
+
+                // Unlock UI
+                finishLoading();
+
+            } catch (error) {
+                console.error("System Error:", error);
+                finishLoading(); // Force load on error
+            }
+        }
+
         // Custom Cursor Logic
         const cursorDot = document.getElementById("cursor-dot");
         const cursorOutline = document.getElementById("cursor-outline");
@@ -378,11 +557,13 @@
             }, { duration: 500, fill: "forwards" });
         });
 
-        // Hover Effect
-        document.querySelectorAll('.hoverable').forEach(el => {
-            el.addEventListener('mouseenter', () => cursorOutline.classList.add('hovered'));
-            el.addEventListener('mouseleave', () => cursorOutline.classList.remove('hovered'));
-        });
+        function refreshHoverables() {
+            // Re-attach hover listeners for dynamic elements
+            document.querySelectorAll('.hoverable').forEach(el => {
+                el.addEventListener('mouseenter', () => cursorOutline.classList.add('hovered'));
+                el.addEventListener('mouseleave', () => cursorOutline.classList.remove('hovered'));
+            });
+        }
 
         // Lenis Smooth Scroll
         const lenis = new Lenis();
@@ -392,32 +573,28 @@
         }
         requestAnimationFrame(raf);
 
-        // Loading Animation & Init
-        window.addEventListener('load', () => {
+        function finishLoading() {
             const loader = document.getElementById('loader');
             const navbar = document.getElementById('navbar');
 
-            setTimeout(() => {
-                loader.style.opacity = '0';
-                loader.style.pointerEvents = 'none';
+            loader.style.opacity = '0';
+            loader.style.pointerEvents = 'none';
 
-                // Animate Hero Content
-                gsap.to('.hero-anim', {
-                    y: 0,
-                    opacity: 1,
-                    duration: 1.5,
-                    stagger: 0.2,
-                    ease: 'power3.out',
-                    delay: 0.5
-                });
+            // Animate Hero Content
+            gsap.to('.hero-anim', {
+                y: 0,
+                opacity: 1,
+                duration: 1.5,
+                stagger: 0.2,
+                ease: 'power3.out',
+                delay: 0.5
+            });
 
-                gsap.to(navbar, { opacity: 1, duration: 1, delay: 1 });
+            gsap.to(navbar, { opacity: 1, duration: 1, delay: 1 });
 
-                // Init ThreeJS after load
-                initThreeJS();
-
-            }, 1000);
-        });
+            // Init ThreeJS after load
+            initThreeJS();
+        }
 
         // Register ScrollTrigger
         gsap.registerPlugin(ScrollTrigger);
@@ -449,30 +626,8 @@
             });
         });
 
-        // About Image Parallax
-        gsap.from("#culture-img", {
-            scale: 1.2,
-            scrollTrigger: {
-                trigger: "#culture",
-                start: "top bottom",
-                end: "bottom top",
-                scrub: true
-            }
-        });
-
-        // Horizontal Scroll for Nature Section
-        gsap.utils.toArray('#nature-gallery > div').forEach((card, i) => {
-            gsap.from(card, {
-                opacity: 0,
-                y: 50,
-                duration: 1,
-                scrollTrigger: {
-                    trigger: card,
-                    start: "top 90%",
-                    toggleActions: "play none none reverse"
-                }
-            });
-        });
+        // Start the App
+        window.addEventListener('load', initSystem);
 
         // Three.js Fog Effect
         function initThreeJS() {

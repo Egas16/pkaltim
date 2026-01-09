@@ -1,12 +1,12 @@
-# Tim 04 - [Subtema]
+# Tim 04 - Wisata Alam Kalimantan Timur
 
-**PIC:** [PIC Name]  
-**Subtema:** [Detail Subtema]
+**PIC:** Ghani  
+**Subtema:** Wisata Alam - Gunung Liangpran | Mahakam Ulu
 
 ## 👥 Anggota Tim
-1. [Nama 1] (Leader)
-2. [Nama 2]
-3. [Nama 3]
+1. Andhika Galih Isya Putra (Leader)
+2. Muhammad Aldiansyah
+3. Al-Ghani Desta Setyawan
 
 ## 📝 Deskripsi Project
 [Deskripsi singkat project tim kalian]
@@ -22,7 +22,7 @@
 **URL:** [Coming Soon]
 
 ## 📅 Status
-🔄 Setup
+🚧 Progress
 
 ---
 **Last Update:** 9 Januari 2026
