@@ -33,7 +33,8 @@ class Destination extends Model
     // ==========================
 
     // 2. Relasi ke Category
-    public function categories()
+    // 2. Relasi ke Category
+    public function category()
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
@@ -49,5 +50,11 @@ class Destination extends Model
     public function images()
     {
         return $this->hasMany(DestinationImage::class);
+    }
+
+    // 5. Relasi ke Reviews
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
     }
 }

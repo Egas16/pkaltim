@@ -22,7 +22,7 @@ class DestinationController extends Controller
         // Hitung review jika nanti sudah ada fitur review, sementara 0 dulu
         $totalReviews = 0;   
 
-        return view('admin.Destination', compact('destinations', 'categories','totalDestinations', 'totalReviews'));
+        return view('admin.Index', compact('destinations', 'categories', 'totalDestinations', 'totalReviews'));
     }
 
     public function store(Request $request)
@@ -130,7 +130,7 @@ class DestinationController extends Controller
         if ($destination->image && Storage::disk('public')->exists($destination->image)) {
             Storage::disk('public')->delete($destination->image);
         }
-        
+
         $destination->delete();
 
         return redirect()->back()->with('success', 'Destinasi berhasil dihapus!');
