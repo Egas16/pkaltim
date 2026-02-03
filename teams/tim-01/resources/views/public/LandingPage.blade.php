@@ -121,7 +121,9 @@
 
                             <h3
                                 class="font-bold text-gray-900 dark:text-white text-lg mb-4 group-hover:text-brand-500 transition line-clamp-1">
-                                {{ $item->name }}
+                                <a href="{{ route('destination.show', $item->slug) }}">
+                                    {{ $item->name }}
+                                </a>
                             </h3>
 
                             <div class="flex justify-between items-center pt-4 border-t border-gray-100 dark:border-gray-700">

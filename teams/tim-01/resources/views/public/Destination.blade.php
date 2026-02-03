@@ -146,8 +146,7 @@
                                         <p class="font-bold text-gray-900 dark:text-white">IDR
                                             {{ number_format($item->price ?? 0, 0, ',', '.') }}</p>
                                     </div>
-                                    <div
-                                        class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 group-hover:bg-brand-500 group-hover:text-white transform group-hover:rotate-45 transition-all">
+                                    <a href="{{ route('destination.show', $item->slug) }}" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 group-hover:bg-brand-500 group-hover:text-white transform group-hover:rotate-45">
                                         <i class="fa-solid fa-arrow-right"></i>
                                     </div>
                                 </div>
